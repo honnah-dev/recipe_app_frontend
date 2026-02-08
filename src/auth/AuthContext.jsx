@@ -1,49 +1,56 @@
-import { createContext, useContext, useEffect, useState } from "react";
-
-const API = import.meta.env.VITE_API;
+import { createContext, useContext, useState } from "react";
+import { loginUser, registerUser } from "../api/auth";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(sessionStorage.getItem("token"));
+  // ✅ TASK: "Check for existing token on app load"
+  // These useState lines check localStorage when the app first loads.
+  // If user was logged in before, they stay logged in after refresh!
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
-  useEffect(() => {
-    if (token) sessionStorage.setItem("token", token);
-  }, [token]);
+  // ✅ TASK: "Store current user state" - the [user, setUser] above stores user state
+  // ✅ TASK: "Store JWT token in localStorage" - happens in login/register below
 
-  const register = async (credentials) => {
-    const response = await fetch(API + "/users/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
-    });
-    const result = await response.text();
-    if (!response.ok) throw Error(result);
-    setToken(result);
-  };
+  // ✅ TASK: "Provide login/logout functions"
+  async function login(email, password) {
+    const data = await loginUser(email, password);
+    // Your backend returns { token, user } together!
+    setToken(data.token);
+    setUser(data.user);
+    // Here is where we store JWT token in localStorage:
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+  }
 
-  const login = async (credentials) => {
-    const response = await fetch(API + "/users/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
-    });
-    const result = await response.text();
-    if (!response.ok) throw Error(result);
-    setToken(result);
-  };
+  async function register(username, email, password) {
+    const data = await registerUser(username, email, password);
+    // Your backend returns { token, user } together!
+    setToken(data.token);
+    setUser(data.user);
+    // Here is where we store JWT token in localStorage:
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+  }
 
-  const logout = () => {
+  function logout() {
     setToken(null);
-    sessionStorage.removeItem("token");
-  };
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
 
-  const value = { token, register, login, logout };
+  // This is what we share with the rest of the app
+  const value = { token, user, login, register, logout };
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// This hook lets any component access auth state: const { user, login, logout } = useAuth();
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) throw Error("useAuth must be used within an AuthProvider");
-  return context;
+  return useContext(AuthContext);
 }

@@ -12,3 +12,7 @@ export default function Layout() {
     </>
   );
 }
+// somewhere in here i think i will do this 
+// const { user } = useAuth();
+// ...
+{/* <h1>Welcome, {user?.username}!</h1> */}
