@@ -31,6 +31,20 @@ Show which boards a recipe belongs to directly on the recipe card.
 - Each tag shows the board name
 - Makes it easy to see recipe organization at a glance
 
+## BoardsGrid Enhancements
+
+### Board Cover Image
+Show the first recipe's image as the board's cover image (like Pinterest).
+- Requires a fancier backend SQL query that JOINs boards with recipes to grab the first recipe's image_url
+- Frontend would display `board.cover_image` or a placeholder if no recipes in the board
+- Not a database schema change - just a more advanced SELECT query
+
+### Recipe Count Badge
+Show how many recipes are in each board (e.g., "5 recipes").
+- Backend query needs to COUNT recipes per board
+- Display as a small badge on the board card
+- Same idea - just a fancier SQL query, no schema change
+
 ## Notes to Self
 
 ### Search Feature in RecipesGrid.jsx
@@ -38,6 +52,28 @@ I left in a search/filter feature that filters recipes by title as you type. I m
 - `filteredRecipes` uses `.filter()` to only show recipes matching the search text
 - `.toLowerCase()` makes it case-insensitive
 - `.includes()` checks if the title contains the search text
+
+## RecipeView Enhancements
+
+### Edit Recipe Functionality
+The Edit button is in RecipeView.jsx but currently just shows an alert ("Edit feature coming soon!").
+- Create an edit form (similar to RecipeImportForm but pre-filled with existing data)
+- Call PUT /api/recipes/:id to update the recipe
+- Navigate back to the recipe view on save
+
+## BoardDetail Enhancements
+
+### Delete Board Button
+Add a "Delete Board" button to BoardDetail.jsx with confirmation.
+- Add handleDelete function (same pattern as recipe delete in RecipeView.jsx)
+- Call DELETE /api/boards/:id
+- window.confirm("Are you sure?") before deleting
+- Navigate to /boards after delete
+
+### Edit Board Button
+Add an "Edit Board" button that opens BoardModal in edit mode.
+- Reuse BoardModal with board={board} instead of board={null}
+- Same showModal pattern from BoardsGrid
 
 ## Other Ideas
 - Loading spinner component (replace "Loading..." text throughout app with a nice spinner)

@@ -6,6 +6,10 @@ export async function registerUser(username, email, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email, password }),
   });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message);
+  }
   const data = await response.json();
   return data;
 }
@@ -16,6 +20,12 @@ export async function loginUser(email, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
+  // If login fails, the backend sends plain text like "Invalid email or password."
+  // We need to check response.ok BEFORE calling .json()
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message);
+  }
   const data = await response.json();
   return data;
 }

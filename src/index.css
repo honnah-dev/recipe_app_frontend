@@ -1,7 +1,572 @@
+/* ==========================================
+   RECIPEBOX - NYT Cooking Inspired Styles
+   ========================================== */
+
+/* --- COLOR PALETTE ---
+   Background:  #faf8f5 (warm off-white)
+   Surface:     #ffffff (white cards)
+   Text:        #333333 (dark gray)
+   Text Light:  #666666 (secondary text)
+   Accent:      #c1440e (warm red-orange)
+   Accent Hover:#a33a0c (darker red-orange)
+   Border:      #e0dcd7 (warm gray)
+*/
+
+/* --- GLOBAL RESET & BASE --- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333333;
+  background-color: #faf8f5;
+}
+
+h1, h2, h3 {
+  font-family: Georgia, "Playfair Display", "Times New Roman", serif;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1a1a1a;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+a {
+  color: #c1440e;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #a33a0c;
+}
+
+/* --- NAVBAR --- */
+
+#navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0dcd7;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #1a1a1a;
+}
+
+#brand p {
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.logo {
+  height: 36px;
+  width: auto;
+}
+
+.url-import {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.url-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e0dcd7;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 280px;
+  transition: border-color 0.2s;
+}
+
+.url-input:focus {
+  outline: none;
+  border-color: #c1440e;
+}
+
+.import-btn {
+  padding: 0.5rem 1rem;
+  background-color: #c1440e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.import-btn:hover {
+  background-color: #a33a0c;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 .nav-link {
-  /* text link style, no background */
+  color: #333333;
+  font-size: 0.95rem;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #c1440e;
+  border-bottom: 2px solid #c1440e;
 }
 
 .auth-btn {
-  /* button style with background, border, etc */
+  padding: 0.5rem 1.25rem;
+  background-color: #c1440e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.auth-btn:hover {
+  background-color: #a33a0c;
+}
+
+/* --- MAIN CONTENT --- */
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* --- RECIPE CARDS GRID --- */
+
+/* auto-fill with minmax: fits as many ~250px cards per row as space allows, wraps on smaller screens */
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Search input and heading span the full row */
+.recipes-grid > h1,
+.recipes-grid > input[type="text"] {
+  grid-column: 1 / -1;
+}
+
+.board-detail > div:last-of-type {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.recipe-card {
+  display: block;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #333333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recipe-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.recipe-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.recipe-card-placeholder {
+  width: 100%;
+  height: 200px;
+  background-color: #e8e4df;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-size: 1.1rem;
+  color: #666666;
+  padding: 1rem;
+  text-align: center;
+}
+
+.recipe-card h2 {
+  padding: 0.75rem 1rem;
+  font-size: 1.1rem;
+}
+
+/* --- BOARDS GRID --- */
+
+/* CSS Grid with auto-fill: fits as many 180px boxes per row as the screen allows.
+   On wide screens you get ~5 per row, on narrow screens it wraps automatically. */
+.boards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.boards-grid > h1 {
+  grid-column: 1 / -1;
+}
+
+.board-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  aspect-ratio: 1 / 1;
+  text-decoration: none;
+  color: #333333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.board-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* --- BOARD DETAIL --- */
+
+.board-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* --- RECIPE VIEW (Cook Mode) --- */
+
+.recipe-view {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.recipe-view h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.recipe-image {
+  width: 100%;
+  max-height: 450px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-meta {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid #e0dcd7;
+  border-bottom: 1px solid #e0dcd7;
+  margin-bottom: 1.5rem;
+  color: #666666;
+  font-size: 0.95rem;
+}
+
+.recipe-view ul,
+.recipe-view ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.recipe-view li {
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.recipe-nav {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0dcd7;
+}
+
+/* --- RECIPE IMPORT FORM --- */
+
+.recipe-import {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.recipe-import h1 {
+  margin-bottom: 1rem;
+}
+
+.recipe-import input[type="text"],
+.recipe-import input[type="url"],
+.recipe-import input[type="number"],
+.recipe-import textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e0dcd7;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s;
+}
+
+.recipe-import input:focus,
+.recipe-import textarea:focus {
+  outline: none;
+  border-color: #c1440e;
+}
+
+.recipe-import textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.recipe-import label {
+  display: block;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.recipe-import label input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+/* --- FORMS (Login, Register) --- */
+
+.loginForm,
+.registerForm {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.loginForm h1,
+.registerForm h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.loginForm input,
+.registerForm input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e0dcd7;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.loginForm input:focus,
+.registerForm input:focus {
+  outline: none;
+  border-color: #c1440e;
+}
+
+.loginForm button,
+.registerForm button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #c1440e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.loginForm button:hover,
+.registerForm button:hover {
+  background-color: #a33a0c;
+}
+
+/* --- MODAL --- */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+  margin-bottom: 1rem;
+}
+
+.modal input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e0dcd7;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.modal input:focus {
+  outline: none;
+  border-color: #c1440e;
+}
+
+.modal button {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.modal button:first-of-type {
+  background-color: #e0dcd7;
+  color: #333333;
+}
+
+.modal button:last-of-type {
+  background-color: #c1440e;
+  color: white;
+}
+
+.modal button:last-of-type:hover {
+  background-color: #a33a0c;
+}
+
+/* --- BUTTONS (general) --- */
+
+.recipe-view button,
+.recipe-import button,
+.board-detail button {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s;
+  background-color: #c1440e;
+  color: white;
+}
+
+.recipe-view button:hover,
+.recipe-import button:hover,
+.board-detail button:hover {
+  background-color: #a33a0c;
+}
+
+/* --- SEARCH INPUT --- */
+
+.recipes-grid > input[type="text"] {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e0dcd7;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 400px;
+  transition: border-color 0.2s;
+}
+
+.recipes-grid > input[type="text"]:focus {
+  outline: none;
+  border-color: #c1440e;
+}
+
+/* --- ERROR & EMPTY STATES --- */
+
+.error {
+  color: #c1440e;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+/* --- RESPONSIVE --- */
+
+@media (max-width: 768px) {
+  #navbar {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .url-input {
+    width: 200px;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  .recipe-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .recipe-view h1 {
+    font-size: 1.6rem;
+  }
 }

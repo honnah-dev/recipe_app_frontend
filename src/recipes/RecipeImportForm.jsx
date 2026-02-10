@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 import { useAuth } from "../auth/AuthContext";
 
 export default function RecipeImportForm() {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Step 1: URL input
-  const [url, setUrl] = useState("");
+  // If the user clicked "Import" in the Navbar, the URL is passed via location.state
+  const [url, setUrl] = useState(location.state?.url || "");
 
   // Step 2: Extracted recipe data (editable)
   const [recipe, setRecipe] = useState(null);
@@ -49,7 +51,20 @@ export default function RecipeImportForm() {
         throw new Error("Failed to extract recipe. Please check the URL and try again.");
       }
       const data = await response.json();
-      setRecipe(data);
+      // The backend returns camelCase (imageUrl, sourceUrl, prepTime, cookTime)
+      // but our database uses snake_case (image_url, source_url, prep_time, cook_time)
+      // so we map them here to match what the save endpoint expects
+      setRecipe({
+        title: data.title,
+        description: data.description,
+        source_url: data.sourceUrl,
+        image_url: data.imageUrl,
+        prep_time: data.prepTime,
+        cook_time: data.cookTime,
+        servings: data.servings,
+        ingredients: data.ingredients,
+        instructions: data.instructions,
+      });
     } catch (e) {
       setError(e.message);
     } finally {
@@ -66,7 +81,20 @@ export default function RecipeImportForm() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ ...recipe, board_ids: selectedBoards }),
+        // Map snake_case back to camelCase to match what the backend expects
+        // Also the backend reads "boards" not "board_ids"
+        body: JSON.stringify({
+          title: recipe.title,
+          description: recipe.description,
+          sourceUrl: recipe.source_url,
+          imageUrl: recipe.image_url,
+          prepTime: recipe.prep_time,
+          cookTime: recipe.cook_time,
+          servings: recipe.servings,
+          ingredients: recipe.ingredients,
+          instructions: recipe.instructions,
+          boards: selectedBoards,
+        }),
       });
       if (!response.ok) {
         throw new Error("Failed to save recipe. Please try again.");
@@ -121,21 +149,22 @@ export default function RecipeImportForm() {
   return (
     <div className="recipe-import">
       <h1>Review & Save Recipe</h1>
+      <h3>Recipe Title:</h3>
 
       <input
         type="text"
         value={recipe.title}
         onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
       />
+      <h3>Description:</h3>
       <textarea
         value={recipe.description}
         onChange={(e) => setRecipe({ ...recipe, description: e.target.value })}
       />
-      <input
-        type="text"
-        value={recipe.source_url}
-        onChange={(e) => setRecipe({ ...recipe, source_url: e.target.value })}
-      />
+  
+
+
+          <h3>Image:</h3>
       <input
         type="text"
         value={recipe.image_url}
@@ -144,16 +173,19 @@ export default function RecipeImportForm() {
       {recipe.image_url && (
         <img src={recipe.image_url} alt={recipe.title} className="recipe-preview-image" />
       )}
+                <h3>Prep Time:</h3>
       <input
         type="number"
         value={recipe.prep_time}
         onChange={(e) => setRecipe({ ...recipe, prep_time: e.target.value })}
       />
+       <h3>Cook Time:</h3>
       <input
         type="number"
         value={recipe.cook_time}
         onChange={(e) => setRecipe({ ...recipe, cook_time: e.target.value })}
       />
+       <h3>Servings:</h3>
       <input
         type="number"
         value={recipe.servings}
@@ -193,6 +225,14 @@ export default function RecipeImportForm() {
           </li>
         ))}
       </ol>
+
+            <h3>Source url:</h3>
+      <input
+        type="text"
+        value={recipe.source_url}
+        onChange={(e) => setRecipe({ ...recipe, source_url: e.target.value })}
+      />
+
 
       <h3>Add to Boards:</h3>
       {boards.map((board) => (

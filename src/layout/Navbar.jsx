@@ -1,4 +1,5 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
+import { useState } from "react";
 
 import { useAuth } from "../auth/AuthContext";
 
@@ -8,7 +9,15 @@ export default function Navbar() {
   // ✅ TASK: "Handle logout" - logout clears localStorage & updates AuthContext (see AuthContext.jsx)
   // Note: redirect to /login happens automatically via ProtectedRoute when token becomes null
   const { token, logout } = useAuth();
+  const navigate = useNavigate();
+  const [importUrl, setImportUrl] = useState("");
 
+  // When user clicks "Import", navigate to the import page and pass the URL along
+  function handleImport() {
+    if (!importUrl.trim()) return;
+    navigate("/recipes/import", { state: { url: importUrl } });
+    setImportUrl("");
+  }
 
   return (
     <header id="navbar">
@@ -22,8 +31,14 @@ export default function Navbar() {
   {/* ✅ TASK: "Add Import Recipe button next to URL input" */}
   {/* I am putting the URL Import - outside nav (becuase it's a form, not navigation) */}
   <div className="url-import">
-    <input type="url" placeholder="Paste recipe URL..." className="url-input" />
-    <button className="import-btn">Import</button>
+    <input
+      type="url"
+      placeholder="Paste recipe URL..."
+      className="url-input"
+      value={importUrl}
+      onChange={(e) => setImportUrl(e.target.value)}
+    />
+    <button className="import-btn" onClick={handleImport}>Import</button>
   </div>
 
   {/* ✅ TASK: "Add navigation links: My Boards | All Recipes" */}

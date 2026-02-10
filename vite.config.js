@@ -6,8 +6,10 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000",  // Your backend port
-        // changeOrigin: true,// you can maybe add this later to this proxy. its a safe default to make the request look like it came from localhost:3000
+        target: "http://localhost:3000",
+        // rewrite removes "/api" from the path before sending to the backend
+        // So fetch("/api/boards") becomes http://localhost:3000/boards
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
