@@ -1,3 +1,7 @@
+/**
+ * RecipesGrid displays all of the user's saved recipes in a grid layout.
+ * Includes a search bar that filters recipes by title on the client side.
+ */
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../auth/AuthContext";
@@ -10,8 +14,8 @@ export default function RecipesGrid() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    // Notes: This code runs when the component first appears on screen
-    //ok also Honnah- we kept the api calls here in this file.... but in your other projects you usually put all api calls in the src>api>recipes.js file. So in this case i decided to directly put the api fetch here. but if is too confusing- you can add this fetch and make it a helper function in the api/recipes.js file and then import it here and call it. up to you!
+    // This code runs when the component first appears on screen.
+    // The API call is directly in this file instead of a separate api/recipes.js helper.
     async function fetchRecipes() {
       try {
         const response = await fetch("/api/recipes", {
@@ -24,10 +28,9 @@ export default function RecipesGrid() {
       }
     }
     fetchRecipes();
-  }, [token]); // <-- "Run this again if token changes"... i.e.: "Hey React, when I show up on screen, go get my recipes from the server. And if my login token ever changes, get them again."
+  }, [token]); // Re-run this effect if token changes
 
-  // Filter recipes by search (Honnah- youre keeping this but maybe take out till you fully study it. It is this recipes.filter, adn its in the <input field bellow. in the return
-  
+  // Filter recipes by search text - uses .filter() to only show recipes whose title matches the search input
   const filteredRecipes = recipes.filter((recipe) =>
     recipe.title.toLowerCase().includes(search.toLowerCase())
   );

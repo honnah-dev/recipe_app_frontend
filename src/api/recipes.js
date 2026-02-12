@@ -1,5 +1,2 @@
-// API calls for recipes: extract, create, get, update, delete
-
-const API_URL = "/api";
-
-// TODO: Add recipe API functions here
+// Optional: recipe API helper functions can go here: if it is better for the flow
+// Currently, recipe API calls are made directly in their components

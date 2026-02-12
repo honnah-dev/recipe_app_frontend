@@ -1,9 +1,11 @@
+/**
+ * RecipeView displays a single recipe in "cook mode" with full details.
+ * Fetches recipe by ID from the URL params. Includes delete functionality.
+ */
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 
 import { useAuth } from "../auth/AuthContext";
-
-// Single recipe page (cook mode)
 export default function RecipeView() {
   const { token } = useAuth();
   const { id } = useParams();

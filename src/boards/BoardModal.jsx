@@ -1,8 +1,11 @@
+/**
+ * BoardModal is a reusable modal for creating or editing a board.
+ * Pass board={null} for create mode, or board={existingBoard} for edit mode.
+ * Uses onClose and onSave callbacks to communicate with the parent component.
+ */
 import { useState } from "react";
 
 import { useAuth } from "../auth/AuthContext";
-
-// Reusable modal for creating OR editing a board
 // These 3 props come from the parent (BoardsGrid):
 //   board = null means CREATE mode, board = {id, name} means EDIT mode
 //   onClose = function to hide the modal (called when user clicks Cancel)

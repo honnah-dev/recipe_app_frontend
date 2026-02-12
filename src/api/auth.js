@@ -1,3 +1,7 @@
+/**
+ * API helper functions for authentication (login and register).
+ * These call the backend directly at localhost:3000 (not through the Vite proxy).
+ */
 const API_URL = "http://localhost:3000";
 
 export async function registerUser(username, email, password) {

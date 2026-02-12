@@ -1,3 +1,7 @@
+/**
+ * BoardDetail displays a single board and the recipes that belong to it.
+ * Makes two API calls: one for the board info, one for its recipes.
+ */
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 

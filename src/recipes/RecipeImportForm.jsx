@@ -1,3 +1,8 @@
+/**
+ * RecipeImportForm handles the full recipe import flow:
+ * Step 1: User pastes a URL and clicks "Extract Recipe" (calls POST /api/recipes/import)
+ * Step 2: User reviews/edits the extracted data, selects boards, and clicks "Save" (calls POST /api/recipes)
+ */
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 
@@ -161,10 +166,8 @@ export default function RecipeImportForm() {
         value={recipe.description}
         onChange={(e) => setRecipe({ ...recipe, description: e.target.value })}
       />
-  
 
-
-          <h3>Image:</h3>
+      <h3>Image:</h3>
       <input
         type="text"
         value={recipe.image_url}
@@ -173,19 +176,19 @@ export default function RecipeImportForm() {
       {recipe.image_url && (
         <img src={recipe.image_url} alt={recipe.title} className="recipe-preview-image" />
       )}
-                <h3>Prep Time:</h3>
+      <h3>Prep Time:</h3>
       <input
         type="number"
         value={recipe.prep_time}
         onChange={(e) => setRecipe({ ...recipe, prep_time: e.target.value })}
       />
-       <h3>Cook Time:</h3>
+      <h3>Cook Time:</h3>
       <input
         type="number"
         value={recipe.cook_time}
         onChange={(e) => setRecipe({ ...recipe, cook_time: e.target.value })}
       />
-       <h3>Servings:</h3>
+      <h3>Servings:</h3>
       <input
         type="number"
         value={recipe.servings}
@@ -194,14 +197,14 @@ export default function RecipeImportForm() {
 
       <h3>Ingredients:</h3>
       <ul>
-        {recipe.ingredients.map((ing, idx) => (
-          <li key={idx}>
+        {recipe.ingredients.map((ingredient, index) => (
+          <li key={index}>
             <input
               type="text"
-              value={ing}
+              value={ingredient}
               onChange={(e) => {
                 const newIngredients = [...recipe.ingredients];
-                newIngredients[idx] = e.target.value;
+                newIngredients[index] = e.target.value;
                 setRecipe({ ...recipe, ingredients: newIngredients });
               }}
             />
@@ -211,14 +214,14 @@ export default function RecipeImportForm() {
 
       <h3>Instructions:</h3>
       <ol>
-        {recipe.instructions.map((step, idx) => (
-          <li key={idx}>
+        {recipe.instructions.map((step, index) => (
+          <li key={index}>
             <input
               type="text"
               value={step}
               onChange={(e) => {
                 const newInstructions = [...recipe.instructions];
-                newInstructions[idx] = e.target.value;
+                newInstructions[index] = e.target.value;
                 setRecipe({ ...recipe, instructions: newInstructions });
               }}
             />
@@ -226,7 +229,7 @@ export default function RecipeImportForm() {
         ))}
       </ol>
 
-            <h3>Source url:</h3>
+      <h3>Source URL:</h3>
       <input
         type="text"
         value={recipe.source_url}

@@ -1,3 +1,7 @@
+/**
+ * BoardsGrid displays all of the user's boards in a grid of clickable cards.
+ * Includes a "+ Create Board" button that opens the BoardModal.
+ */
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 

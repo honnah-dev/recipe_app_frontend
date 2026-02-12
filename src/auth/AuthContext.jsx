@@ -1,10 +1,14 @@
+/**
+ * AuthContext provides authentication state (token, user) and actions (login, register, logout)
+ * to the entire app. Any component can access auth with the useAuth() hook.
+ */
 import { createContext, useContext, useState } from "react";
 import { loginUser, registerUser } from "../api/auth";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  // ✅ TASK: "Check for existing token on app load"
+  // Check for existing token on app load
   // These useState lines check localStorage when the app first loads.
   // If user was logged in before, they stay logged in after refresh!
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -13,10 +17,10 @@ export function AuthProvider({ children }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  // ✅ TASK: "Store current user state" - the [user, setUser] above stores user state
-  // ✅ TASK: "Store JWT token in localStorage" - happens in login/register below
+  // The [user, setUser] above stores current user state
+  // JWT token is stored in localStorage in the login/register functions below
 
-  // ✅ TASK: "Provide login/logout functions"
+  // Login, register, and logout functions shared with the rest of the app
   async function login(email, password) {
     const data = await loginUser(email, password);
     // Your backend returns { token, user } together!
