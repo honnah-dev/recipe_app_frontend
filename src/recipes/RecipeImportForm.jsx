@@ -77,17 +77,37 @@ export default function RecipeImportForm() {
     }
   }
 
+  // If a URL was passed from the Navbar, auto-extract immediately (skip the URL input step)
+  // If a full recipe was passed from RecipeView's Edit button, load it directly into the form
+  // Runs once on mount only — dependencies are intentionally omitted
+  useEffect(() => {
+    if (location.state?.recipe) {
+      setRecipe(location.state.recipe);
+    } else if (location.state?.url) {
+      handleExtract();
+    }
+  }, []);
+
   // Step 2: Save the (possibly edited) recipe
   async function handleSave() {
     try {
-      const response = await fetch("/api/recipes", {
-        method: "POST",
+      // If recipe.id exists, this is an existing recipe being edited (came from RecipeView's Edit button)
+      // If recipe.id is undefined, this is a brand new recipe being imported from a URL
+      const isEditing = Boolean(recipe.id);
+
+      // Editing uses PUT /api/recipes/123 to update, importing uses POST /api/recipes to create
+      const fetchUrl = isEditing ? `/api/recipes/${recipe.id}` : "/api/recipes";
+      const method = isEditing ? "PUT" : "POST";
+
+      // Everything below is the same for both editing and creating:
+      // same headers, same body fields, same error handling, same redirect
+      const response = await fetch(fetchUrl, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         // Map snake_case back to camelCase to match what the backend expects
-        // Also the backend reads "boards" not "board_ids"
         body: JSON.stringify({
           title: recipe.title,
           description: recipe.description,
@@ -131,20 +151,24 @@ export default function RecipeImportForm() {
     setNewBoardName("");
   }
 
-  // Show URL input if no recipe extracted yet
+  // Show loading or URL input if no recipe extracted yet
   if (!recipe) {
     return (
       <div className="recipe-import">
-        <h1>Import a Recipe</h1>
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="Paste recipe URL..."
-        />
-        <button onClick={handleExtract} disabled={loading}>
-          {loading ? "Extracting..." : "Extract Recipe"}
-        </button>
+        {loading ? null : (
+          <>
+            <h1>Import a Recipe</h1>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="Paste recipe URL..."
+            />
+            <button onClick={handleExtract}>
+              Extract Recipe
+            </button>
+          </>
+        )}
         {error && <p className="error">{error}</p>}
       </div>
     );
@@ -216,10 +240,18 @@ export default function RecipeImportForm() {
       <ol>
         {recipe.instructions.map((step, index) => (
           <li key={index}>
-            <input
-              type="text"
+            <textarea
+              rows={1}
               value={step}
+              ref={(el) => {
+                if (el) {
+                  el.style.height = "auto";
+                  el.style.height = el.scrollHeight + "px";
+                }
+              }}
               onChange={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
                 const newInstructions = [...recipe.instructions];
                 newInstructions[index] = e.target.value;
                 setRecipe({ ...recipe, instructions: newInstructions });

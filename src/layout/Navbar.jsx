@@ -25,7 +25,7 @@ export default function Navbar() {
     <header id="navbar">
   {/* Logo and brand name - outside nav */}
   <NavLink id="brand" to="/boards">
-    <img src="/assets/logo.png" alt="Logo" className="logo" />
+    <img src="/SimmerText.png" alt="Simmer" className="logo" />
     <p>RecipeBox</p>
   </NavLink>
 

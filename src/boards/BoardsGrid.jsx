@@ -45,6 +45,10 @@ export default function BoardsGrid() {
           It's the JSX version of a for-loop. */}
       {boards.map((board) => (
         <Link to={`/boards/${board.id}`} key={board.id} className="board-card">
+          {board.image_url
+            ? <img src={board.image_url} alt={board.name} className="board-card-image" />
+            : <div className="board-card-placeholder"></div>
+          }
           <h2>{board.name}</h2>
         </Link>
       ))}

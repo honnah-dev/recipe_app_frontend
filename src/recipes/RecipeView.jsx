@@ -56,6 +56,10 @@ export default function RecipeView() {
     }
   }
 
+  async function handleEdit() {
+  navigate("/recipes/import", { state: { recipe } });
+}
+
   if (error) {
     return <p className="error">{error}</p>;
   }
@@ -102,7 +106,7 @@ export default function RecipeView() {
         </p>
       )}
       <button onClick={handleDelete}>Delete</button>
-      <button onClick={() => alert("Edit feature coming soon!")}>Edit</button>
+      <button onClick={handleEdit}>Edit</button>
 
 
       <div className="recipe-nav">

@@ -1,11 +1,10 @@
 /**
  * API helper functions for authentication (login and register).
- * These call the backend directly at localhost:3000 (not through the Vite proxy).
+ * Uses relative paths so requests go through the Vite proxy (same as all other API calls).
  */
-const API_URL = "http://localhost:3000";
 
 export async function registerUser(username, email, password) {
-  const response = await fetch(`${API_URL}/auth/register`, {
+  const response = await fetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email, password }),
@@ -19,7 +18,7 @@ export async function registerUser(username, email, password) {
 }
 
 export async function loginUser(email, password) {
-  const response = await fetch(`${API_URL}/auth/login`, {
+  const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
