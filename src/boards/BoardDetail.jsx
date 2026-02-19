@@ -1,38 +1,23 @@
-/**
- * BoardDetail displays a single board and the recipes that belong to it.
- * Makes two API calls: one for the board info, one for its recipes.
- */
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 
 import { useAuth } from "../auth/AuthContext";
 import RecipeCard from "../recipes/RecipeCard";
+import BoardModal from "./BoardModal";
 
-// This page shows a SINGLE board and the recipes inside it.
-// URL: /boards/:id  (e.g., /boards/5)
-// Similar to RecipesGrid but only shows recipes in ONE board.
 export default function BoardDetail() {
   const { token } = useAuth();
-
-  // useParams() grabs the :id from the URL.
-  // If the URL is /boards/5, then id = "5"
+  const navigate = useNavigate();
   const { id } = useParams();
 
-  // Two separate pieces of state:
-  // board = the board info (name, created_at)
-  // recipes = the recipes that belong to this board
   const [board, setBoard] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  // When this component loads, make TWO API calls:
-  // 1. Get the board info (so we can show the name)
-  // 2. Get the recipes in this board (so we can show the cards)
   useEffect(() => {
     async function loadBoard() {
       try {
-        // FETCH #1: Get the board itself (name, etc.)
-        // This hits: GET /api/boards/5
         const boardResponse = await fetch(`/api/boards/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -42,8 +27,6 @@ export default function BoardDetail() {
         const boardData = await boardResponse.json();
         setBoard(boardData);
 
-        // FETCH #2: Get the recipes inside this board
-        // This hits: GET /api/boards/5/recipes
         const recipesResponse = await fetch(`/api/boards/${id}/recipes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -57,30 +40,58 @@ export default function BoardDetail() {
       }
     }
     loadBoard();
-  }, [id, token]); // Re-run if the board id or token changes
+  }, [id, token]);
+
+  async function handleDeleteBoard() {
+    const confirmed = window.confirm("Are you sure you want to delete this board? Move any recipes to another board first if you want to keep them.");
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/boards/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message);
+      }
+
+      navigate("/boards");
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   if (error) return <p className="error">{error}</p>;
-  // While waiting for the API response, board is still null
   if (!board) return <p>Loading...</p>;
 
   return (
     <div className="board-detail">
-      {/* Link back to the boards list page (/boards) */}
       <Link to="/boards">← Back to Boards</Link>
 
       <h1>{board.name}</h1>
-      {/* recipes.length = how many recipes are in the array */}
       <p>{recipes.length} recipes</p>
 
-      {/* Same pattern as RecipesGrid:
-          If no recipes, show empty message.
-          Otherwise, loop through and render a RecipeCard for each one. */}
       {recipes.length === 0 ? (
         <p>No recipes in this board yet</p>
       ) : (
         recipes.map((recipe) => (
           <RecipeCard key={recipe.id} recipe={recipe} />
         ))
+      )}
+      <button onClick={() => setShowEditModal(true)}>Edit Board</button>
+      <button onClick={handleDeleteBoard}>Delete Board</button>
+
+      {showEditModal && (
+        <BoardModal
+          board={board}
+          onClose={() => setShowEditModal(false)}
+          onSave={(updatedBoard) => {
+            setBoard(updatedBoard);
+            setShowEditModal(false);
+          }}
+        />
       )}
     </div>
   );

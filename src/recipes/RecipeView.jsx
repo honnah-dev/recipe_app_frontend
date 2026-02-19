@@ -1,7 +1,3 @@
-/**
- * RecipeView displays a single recipe in "cook mode" with full details.
- * Fetches recipe by ID from the URL params. Includes delete functionality.
- */
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 
@@ -70,33 +66,42 @@ export default function RecipeView() {
 
   return (
     <div className="recipe-view">
-      <button onClick={() => window.history.back()}>Back to all recipes</button>
-      <h1>{recipe.title}</h1>
+      <button onClick={() => window.history.back()} className="back-link">← Back to all recipes</button>
 
-      {recipe.image_url && (
-        <img src={recipe.image_url} alt={recipe.title} className="recipe-image" />
-      )}
-
-      <p>{recipe.description}</p>
-
-      <div className="recipe-meta">
-        <p>Prep Time: {recipe.prep_time} minutes</p>
-        <p>Cook Time: {recipe.cook_time} minutes</p>
-        <p>Servings: {recipe.servings}</p>
+      <div className="recipe-hero">
+        {recipe.image_url && (
+          <img src={recipe.image_url} alt={recipe.title} className="recipe-image" />
+        )}
+        <div className="recipe-hero-info">
+          <h1>{recipe.title}</h1>
+          <div className="recipe-meta">
+            <p>Prep Time: {recipe.prep_time} min</p>
+            <p>Cook Time: {recipe.cook_time} min</p>
+            <p>Servings: {recipe.servings}</p>
+          </div>
+          <p>{recipe.description}</p>
+        </div>
       </div>
-      <h3>Ingredients:</h3>
-      <ul>
-        {recipe.ingredients.map((ingredient, index) => (
-          <li key={index}>{ingredient}</li>
-        ))}
-      </ul>
 
-      <h3>Instructions:</h3>
-      <ol>
-        {recipe.instructions.map((step, index) => (
-          <li key={index}>{step}</li>
-        ))}
-      </ol>
+      <div className="recipe-columns">
+        <div className="recipe-ingredients">
+          <h3>Ingredients:</h3>
+          <ul>
+            {recipe.ingredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="recipe-instructions">
+          <h3>Instructions:</h3>
+          <ol>
+            {recipe.instructions.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      </div>
 
       {recipe.source_url && (
         <p>
@@ -107,7 +112,6 @@ export default function RecipeView() {
       )}
       <button onClick={handleDelete}>Delete</button>
       <button onClick={handleEdit}>Edit</button>
-
 
       <div className="recipe-nav">
         <Link to="/recipes">View All Recipes</Link>

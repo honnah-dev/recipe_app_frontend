@@ -1,8 +1,3 @@
-/**
- * RecipeCard is a reusable display component that shows a recipe's image and title.
- * It receives a recipe prop from its parent — it does not fetch any data itself.
- * Used by RecipesGrid and BoardDetail to render recipe lists.
- */
 import { Link } from "react-router";
 export default function RecipeCard({ recipe }) {
   return (

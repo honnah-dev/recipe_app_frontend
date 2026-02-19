@@ -3,18 +3,11 @@ import { useState } from "react";
 
 import { useAuth } from "../auth/AuthContext";
 
-/**
- * Navbar displays the logo, a persistent URL import field, navigation links,
- * and a login/logout button. Visible on every page via the Layout component.
- */
 export default function Navbar() {
-  // logout clears localStorage and updates AuthContext (see AuthContext.jsx)
-  // Redirect to /login happens automatically via ProtectedRoute when token becomes null
   const { token, logout } = useAuth();
   const navigate = useNavigate();
   const [importUrl, setImportUrl] = useState("");
 
-  // When user clicks "Import", navigate to the import page and pass the URL along
   function handleImport() {
     if (!importUrl.trim()) return;
     navigate("/recipes/import", { state: { url: importUrl } });
@@ -23,13 +16,10 @@ export default function Navbar() {
 
   return (
     <header id="navbar">
-  {/* Logo and brand name - outside nav */}
   <NavLink id="brand" to="/boards">
-    <img src="/SimmerText.png" alt="Simmer" className="logo" />
-    <p>RecipeBox</p>
+    <img src="/REd_Simmer.svg" alt="Simmer" className="logo" />
   </NavLink>
 
-  {/* URL import field - outside nav because it's a form, not navigation */}
   <div className="url-import">
     <input
       type="url"
@@ -41,12 +31,10 @@ export default function Navbar() {
     <button className="import-btn" onClick={handleImport}>Import</button>
   </div>
 
-  {/* Navigation links - inside nav */}
   <nav className="main-nav">
     <NavLink to="/boards" className="nav-link">My Boards</NavLink>
-    <NavLink to="/recipes" className="nav-link">All Recipes</NavLink>
+    <NavLink to="/recipes" className="nav-link">My Recipes</NavLink>
 
-    {/* Login and Logout both use auth-btn class to look like buttons */}
     {token ? (
       <button onClick={logout} className="auth-btn">Log out</button>
     ) : (

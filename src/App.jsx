@@ -1,7 +1,3 @@
-/**
- * App defines all routes for the application.
- * Protected routes are wrapped in ProtectedRoute to require authentication.
- */
 import { Route, Routes } from "react-router";
 import Layout from "./layout/Layout";
 import Login from "./auth/Login";

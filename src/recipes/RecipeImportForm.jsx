@@ -1,8 +1,3 @@
-/**
- * RecipeImportForm handles the full recipe import flow:
- * Step 1: User pastes a URL and clicks "Extract Recipe" (calls POST /api/recipes/import)
- * Step 2: User reviews/edits the extracted data, selects boards, and clicks "Save" (calls POST /api/recipes)
- */
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 
@@ -13,21 +8,14 @@ export default function RecipeImportForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Step 1: URL input
-  // If the user clicked "Import" in the Navbar, the URL is passed via location.state
   const [url, setUrl] = useState(location.state?.url || "");
-
-  // Step 2: Extracted recipe data (editable)
   const [recipe, setRecipe] = useState(null);
-
-  // Loading & error states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [boards, setBoards] = useState([]);
   const [selectedBoards, setSelectedBoards] = useState([]);
   const [newBoardName, setNewBoardName] = useState("");
 
-  // Fetch user's boards when component loads
   useEffect(() => {
     async function loadBoards() {
       const response = await fetch("/api/boards", {
@@ -39,7 +27,6 @@ export default function RecipeImportForm() {
     loadBoards();
   }, [token]);
 
-  // Step 1: Extract recipe from URL
   async function handleExtract() {
     setLoading(true);
     setError(null);
@@ -53,12 +40,10 @@ export default function RecipeImportForm() {
         body: JSON.stringify({ url }),
       });
       if (!response.ok) {
-        throw new Error("Failed to extract recipe. Please check the URL and try again.");
+        throw new Error("This site doesn't include structured recipe data, which is what we currently rely on to import recipes. This is common with smaller or older blogs. Stay tuned! We're working on smarter parsing that will be able to extract recipes from any page, even without structured data. For now, try URLs from larger sites.");
       }
       const data = await response.json();
-      // The backend returns camelCase (imageUrl, sourceUrl, prepTime, cookTime)
-      // but our database uses snake_case (image_url, source_url, prep_time, cook_time)
-      // so we map them here to match what the save endpoint expects
+      // Map camelCase API response to snake_case for the form
       setRecipe({
         title: data.title,
         description: data.description,
@@ -77,9 +62,7 @@ export default function RecipeImportForm() {
     }
   }
 
-  // If a URL was passed from the Navbar, auto-extract immediately (skip the URL input step)
-  // If a full recipe was passed from RecipeView's Edit button, load it directly into the form
-  // Runs once on mount only — dependencies are intentionally omitted
+  // Auto-extract if URL passed from Navbar, or load recipe if passed from Edit
   useEffect(() => {
     if (location.state?.recipe) {
       setRecipe(location.state.recipe);
@@ -88,26 +71,23 @@ export default function RecipeImportForm() {
     }
   }, []);
 
-  // Step 2: Save the (possibly edited) recipe
   async function handleSave() {
-    try {
-      // If recipe.id exists, this is an existing recipe being edited (came from RecipeView's Edit button)
-      // If recipe.id is undefined, this is a brand new recipe being imported from a URL
-      const isEditing = Boolean(recipe.id);
+    if (selectedBoards.length === 0) {
+      setError("Please select at least one board before saving.");
+      return;
+    }
 
-      // Editing uses PUT /api/recipes/123 to update, importing uses POST /api/recipes to create
+    try {
+      const isEditing = Boolean(recipe.id);
       const fetchUrl = isEditing ? `/api/recipes/${recipe.id}` : "/api/recipes";
       const method = isEditing ? "PUT" : "POST";
 
-      // Everything below is the same for both editing and creating:
-      // same headers, same body fields, same error handling, same redirect
       const response = await fetch(fetchUrl, {
         method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        // Map snake_case back to camelCase to match what the backend expects
         body: JSON.stringify({
           title: recipe.title,
           description: recipe.description,
@@ -131,7 +111,6 @@ export default function RecipeImportForm() {
     }
   }
 
-  // Create a new board inline
   async function handleCreateBoard() {
     if (!newBoardName.trim()) return;
 
@@ -145,13 +124,11 @@ export default function RecipeImportForm() {
     });
     const newBoard = await response.json();
 
-    // Add to boards list and auto-select it
     setBoards([...boards, newBoard]);
     setSelectedBoards([...selectedBoards, newBoard.id]);
     setNewBoardName("");
   }
 
-  // Show loading or URL input if no recipe extracted yet
   if (!recipe) {
     return (
       <div className="recipe-import">
@@ -174,7 +151,6 @@ export default function RecipeImportForm() {
     );
   }
 
-  // Show editable form once recipe is extracted
   return (
     <div className="recipe-import">
       <h1>Review & Save Recipe</h1>
@@ -286,7 +262,7 @@ export default function RecipeImportForm() {
           {board.name}
         </label>
       ))}
-      
+
       <div>
         <input
           type="text"
@@ -299,9 +275,11 @@ export default function RecipeImportForm() {
         </button>
       </div>
 
-      <button onClick={() => setRecipe(null)}>Cancel</button>
-      <button onClick={handleSave}>Save Recipe</button>
-      {error && <p className="error">{error}</p>}
+      <div className="recipe-import-actions">
+        <button onClick={() => setRecipe(null)}>Cancel</button>
+        <button onClick={handleSave}>Save Recipe</button>
+        {error && <p className="error">{error}</p>}
+      </div>
     </div>
   );
 }

@@ -1,7 +1,3 @@
-/**
- * Layout wraps every page with the Navbar at the top.
- * The Outlet renders whichever child route is currently active.
- */
 import { Outlet } from "react-router";
 import Navbar from "./Navbar";
 import { useAuth } from "../auth/AuthContext";
@@ -13,10 +9,17 @@ export default function Layout() {
     <>
       <Navbar />
       <main>
-        {/* //{user && means it only shows the welcome text if someone is logged in */}
-        {user && <p className="welcome-message">Welcome to {user.username}&apos;s Recipes!</p>}
+        {user && (
+          <div className="sidebar-text">
+            <span className="sidebar-label">Welcome to</span>
+            <span className="sidebar-username">{user.username}&apos;s</span>
+            <span className="sidebar-label">Recipes!</span>
+          </div>
+        )}
 
         <Outlet />
+
+        <img src="/text_in_a_circlesvg.svg" alt="" className="circle-badge" />
       </main>
     </>
   );

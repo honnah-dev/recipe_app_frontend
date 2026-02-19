@@ -1,7 +1,3 @@
-/**
- * BoardsGrid displays all of the user's boards in a grid of clickable cards.
- * Includes a "+ Create Board" button that opens the BoardModal.
- */
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
@@ -12,10 +8,6 @@ export default function BoardsGrid() {
   const { token } = useAuth();
   const [boards, setBoards] = useState([]);
   const [error, setError] = useState(null);
-
-  // showModal is just a true/false switch.
-  // false = modal is hidden. true = modal is visible.
-  // Think of it like a light switch for the modal.
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -39,39 +31,26 @@ export default function BoardsGrid() {
     <div className="boards-grid">
       <h1>My Boards</h1>
 
-      {/* The curly braces {} in JSX mean "run some JavaScript here"
-          Without {}, everything is just HTML. With {}, you can put logic in.
-          So {boards.map(...)} means: "loop through boards and render something for each one"
-          It's the JSX version of a for-loop. */}
-      {boards.map((board) => (
-        <Link to={`/boards/${board.id}`} key={board.id} className="board-card">
-          {board.image_url
-            ? <img src={board.image_url} alt={board.name} className="board-card-image" />
-            : <div className="board-card-placeholder"></div>
-          }
-          <h2>{board.name}</h2>
-        </Link>
-      ))}
+      <div className="boards-list">
+        {boards.map((board) => (
+          <Link to={`/boards/${board.id}`} key={board.id} className="board-card">
+            {board.image_url
+              ? <img src={board.image_url} alt={board.name} className="board-card-image" />
+              : <div className="board-card-placeholder"></div>
+            }
+            <h2>{board.name}</h2>
+          </Link>
+        ))}
 
-      {/* STEP 1: User clicks this button, which flips showModal to true */}
-      <button onClick={() => setShowModal(true)} className="board-card">
-        + Create Board
-      </button>
+        <button onClick={() => setShowModal(true)} className="create-board-button">
+          + Create Board
+        </button>
 
-      {boards.length === 0 && (
-        <p>No boards yet! Create one to organize your recipes.</p>
-      )}
+        {boards.length === 0 && (
+          <p>No boards yet! Create one to organize your recipes.</p>
+        )}
+      </div>
 
-      {/* STEP 2: This is like an if-statement in JSX.
-          It reads as: "If showModal is true, THEN show BoardModal"
-          When showModal is false, this whole thing is skipped/hidden.
-
-          So: showModal && <BoardModal /> means:
-            - showModal is false? Don't render anything.
-            - showModal is true? Render the BoardModal component.
-      */}
-      {/* STEP 3: onClose - when user clicks "Cancel", flip showModal back to false, which hides the modal */}
-      {/* STEP 4: onSave - when user clicks "Save", BoardModal sends us the newBoard. We add it to our list, then hide the modal. */}
       {showModal && (
         <BoardModal
           board={null}

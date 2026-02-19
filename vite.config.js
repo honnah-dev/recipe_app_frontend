@@ -7,8 +7,6 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://localhost:3000",
-        // rewrite removes "/api" from the path before sending to the backend
-        // So fetch("/api/boards") becomes http://localhost:3000/boards
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
